@@ -12,6 +12,7 @@ global movcur
 global clrscr
 global kprntstr
 global kprntnum
+global kprnthex
 global inccur
 global kprintf
 
@@ -90,6 +91,37 @@ kprntstr:
 .out:
 	ret
 
+kprnthex:
+	; eax has the number
+	push ebp
+	mov ebp,esp
+	dec esp
+	mov byte [esp],0
+
+.loop:
+	mov edx,eax
+	and edx,15
+	cmp edx,9
+	jg .let
+.num:
+	or dl,0x30
+	jmp .out
+.let:
+	add dl,0x57
+.out:	
+	shr eax,4
+	dec esp
+	mov byte [esp],dl
+	cmp eax,0
+	jne .loop
+	
+	mov eax,esp
+	call kprntstr
+
+	mov esp,ebp
+	pop ebp
+	ret
+
 kprntnum:
 	; eax has the number
 	push ebp
@@ -157,12 +189,11 @@ kprintf:
 	cmp byte [eax],0x25
 	je .percent
 	pusha
+	xor ecx,ecx
+	mov byte cl,[eax]
 	mov eax,[_sys_cur_row]
 	mov ebx,[_sys_cur_col]
-	xor ecx,ecx
-	mov cl,[eax]
-	xor edx,edx
-	mov dl,7
+	mov edx,7
 	call kputchar
 	popa
 	call inccur
@@ -206,7 +237,11 @@ kprintf:
 	jmp .endpercent
 
 .printhex:
-	; to be implemented
+	pusha
+	mov eax,[ebp+ebx]
+	call kprnthex
+	popa
+	add ebx,4
 	jmp .endpercent
 
 .printstr:
