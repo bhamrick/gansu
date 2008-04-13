@@ -5,6 +5,7 @@ extern clrscr
 extern movcur
 extern kprintf
 extern kscroll
+extern init_gdt
 
 _start:
 	jmp multiboot_entry
@@ -22,13 +23,7 @@ multiboot_entry:
 	mov eax,10
 	mov ebx,0
 	call movcur
-	push string_hello
-	push dword 0x7d
-	push dword 56
-	push dword 0
-	mov eax,string_fmt
-	call kprintf
-	add esp,16
+	call init_gdt
 
 stop:	hlt
 	jmp stop
@@ -43,5 +38,3 @@ section .bss
 _sys_stack:
 
 section .data
-string_hello: db 'Hello world!',0
-string_fmt: db 'Hello%% %d %d 0x%x',10,'%s',10,0
