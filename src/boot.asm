@@ -2,6 +2,7 @@ section .text
 
 global _start
 extern kputchar
+extern clrscr
 
 _start:
 	jmp multiboot_entry
