@@ -3,7 +3,6 @@
 section .text
 
 global init_gdt
-extern kprintf
 
 init_gdt:
 	mov byte [the_gdt],0x00
@@ -27,26 +26,16 @@ init_gdt:
 	mov byte [the_gdt+18],0x00
 	mov byte [the_gdt+19],0x00
 	mov byte [the_gdt+20],0x00
-	mov byte [the_gdt+21],0x92
+	mov byte [the_gdt+21],0x93
 	mov byte [the_gdt+22],0xcf
 	mov byte [the_gdt+23],0x00
 	
 	mov eax,the_gdt
 	mov [gdtr+2],eax
 	mov ax,8*ENTRIES
+	dec ax
 	mov [gdtr],ax
 	
-	pusha
-	xor eax,eax
-	mov ax,[gdtr]
-	push eax
-	mov eax,[gdtr+2]
-	push eax
-	mov eax,gdt_fmt_str
-	call kprintf
-	add esp,8
-	popa
-
 	lgdt [gdtr]
 
 	jmp 0x08:.reloadcs
@@ -65,6 +54,3 @@ the_gdt:
 gdtr:
 	resw 1
 	resd 1
-
-section .data
-gdt_fmt_str: db 'Base=0x%x',10,'Limit=0x%x',10,0

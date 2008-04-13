@@ -6,6 +6,7 @@ extern movcur
 extern kprintf
 extern kscroll
 extern init_gdt
+extern init_idt
 
 _start:
 	jmp multiboot_entry
@@ -20,10 +21,12 @@ multiboot_entry:
 	cli
 	mov ebp,multiboot_entry
 	mov esp,_sys_stack
-	mov eax,10
+	mov eax,8
 	mov ebx,0
 	call movcur
 	call init_gdt
+	call init_idt
+	sti
 
 stop:	hlt
 	jmp stop
