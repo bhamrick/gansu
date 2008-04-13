@@ -1,12 +1,10 @@
 section .text
 
 global _start
-extern kputchar
-extern kputstr
 extern clrscr
 extern movcur
-extern kprntnum
 extern kprintf
+extern kscroll
 
 _start:
 	jmp multiboot_entry
@@ -30,7 +28,7 @@ multiboot_entry:
 	push dword 0
 	mov eax,string_fmt
 	call kprintf
-	add esp,8
+	add esp,16
 
 stop:	hlt
 	jmp stop
@@ -46,4 +44,4 @@ _sys_stack:
 
 section .data
 string_hello: db 'Hello world!',0
-string_fmt: db 'Hello%% %d %d 0x%x',10,'%s',0
+string_fmt: db 'Hello%% %d %d 0x%x',10,'%s',10,0

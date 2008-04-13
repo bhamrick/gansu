@@ -1,7 +1,7 @@
 %define VIDEO 0xB8000
-%define ROWS 24
+%define ROWS 25
 %define COLS 80
-%define BYTES 3840
+%define BYTES 4000
 
 section .text
 
@@ -15,6 +15,7 @@ global kprntnum
 global kprnthex
 global inccur
 global kprintf
+global kscroll
 
 inccur:
 	inc dword [_sys_cur_col]
@@ -22,6 +23,12 @@ inccur:
 	jl .out
 	mov dword [_sys_cur_col],0
 	inc dword [_sys_cur_row]
+	cmp dword [_sys_cur_row],ROWS
+	jl .out
+	dec dword [_sys_cur_row]
+	pusha
+	call kscroll
+	popa
 .out:
 	ret
 
@@ -79,12 +86,17 @@ kprntstr:
 	mov edx,7
 	call kputchar
 	popa
-	inc dword [_sys_cur_col]
-	cmp dword [_sys_cur_col],COLS
-	jl .endloop
+	call inccur
+	jmp .endloop
 .incrow:
 	mov dword [_sys_cur_col],0
 	inc dword [_sys_cur_row]
+	cmp dword [_sys_cur_row],ROWS
+	jl .endloop
+	dec dword [_sys_cur_row]
+	pusha
+	call kscroll
+	popa
 .endloop:
 	inc ecx
 	jmp .loop
@@ -203,6 +215,12 @@ kprintf:
 	mov dword [_sys_cur_col],0
 	inc dword [_sys_cur_row]
 	inc eax
+	cmp dword [_sys_cur_row],ROWS
+	jl .normal
+	dec dword [_sys_cur_row]
+	pusha
+	call kscroll
+	popa
 	jmp .normal
 .percent:
 	inc eax
@@ -259,6 +277,24 @@ kprintf:
 .out:
 	mov esp,ebp
 	pop ebp
+	ret
+
+kscroll:
+	mov edx,VIDEO
+	xor ebx,ebx
+	mov ecx,2*COLS
+.loop:
+	mov al,[edx+ecx]
+	mov byte [edx+ebx],al
+	inc ebx
+	inc ecx
+	cmp ecx,BYTES
+	jl .loop
+.loop2:
+	mov byte [edx+ebx],0
+	inc ebx
+	cmp ebx,BYTES
+	jl .loop2
 	ret
 
 section .bss
