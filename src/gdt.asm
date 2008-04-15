@@ -39,6 +39,9 @@ init_gdt:
 	lgdt [gdtr]
 
 	jmp 0x08:.reloadcs
+
+align 32
+
 .reloadcs:
 	mov ax,0x10
 	mov ds,ax

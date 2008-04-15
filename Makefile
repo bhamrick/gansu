@@ -4,6 +4,7 @@ LDFLAGS=-melf_i386
 LINKER=linker.ld
 
 all: kernel
+	echo done
 
 kernel:
 	nasm $(ASMFLAGS) -o build/boot.o src/boot.asm
