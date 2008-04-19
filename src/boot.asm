@@ -1,17 +1,19 @@
 section .text
 
 global _start
-extern clrscr
 extern movcur
-extern kprintf
-extern kscroll
+extern initscr
 extern init_gdt
 extern init_idt
+extern init_pit
+extern remap_pic
+
+extern gdtr
 
 _start:
 	jmp multiboot_entry
 
-	align 4
+	align 32
 multiboot_header:
 	dd 0x1BADB002
 	dd 0x00000003
@@ -21,19 +23,18 @@ multiboot_entry:
 	cli
 	mov ebp,multiboot_entry
 	mov esp,_sys_stack
+	call initscr
 	mov eax,8
 	mov ebx,0
 	call movcur
 	call init_gdt
 	call init_idt
+	call init_pit
+	call remap_pic
 	sti
 
 stop:	hlt
 	jmp stop
-	nop
-	nop
-	nop
-	nop
 
 section .bss
 	align 32

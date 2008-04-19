@@ -35,6 +35,21 @@ inccur:
 initscr:
 	mov dword [_sys_cur_row],0
 	mov dword [_sys_cur_col],0
+	
+	mov dx,0x3d4
+	mov al,0x0f
+	out dx,ax
+	inc dx
+	mov ax,0x00
+	out dx,ax
+	
+	dec dx
+	mov ax,0x0e
+	out dx,ax
+	inc dx
+	mov ax,0x20
+	out dx,ax
+	
 	ret
 
 movcur:

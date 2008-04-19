@@ -1,14 +1,16 @@
 %define ENTRIES 256
 %macro isr_no_code 1
+global isr%1
 isr%1:
-;	cli
+	cli
 	push dword 0
 	push dword %1
 	jmp isr_common_stub
 %endmacro
 %macro isr_err_code 1
+global isr%1
 isr%1:
-;	cli
+	cli
 	push dword %1
 	jmp isr_common_stub
 %endmacro
@@ -17,46 +19,30 @@ isr%1:
 	mov ebx,isr%1
 	call _sys_register_isr
 %endmacro
+%macro irq 1
+global irq%1
+irq%1:
+	cli
+	push dword %1
+	jmp irq_common_stub
+%endmacro
+%macro register_irq 1
+	mov eax,%1
+	add eax,32
+	mov ebx,irq%1
+	call _sys_register_isr
+%endmacro
 
 section .text
 
 global init_idt
 global _sys_register_isr
-global isr0
-global isr1
-global isr2
-global isr3
-global isr4
-global isr5
-global isr6
-global isr7
-global isr8
-global isr9
-global isr10
-global isr11
-global isr12
-global isr13
-global isr14
-global isr15
-global isr16
-global isr17
-global isr18
-global isr19
-global isr20
-global isr21
-global isr22
-global isr23
-global isr24
-global isr25
-global isr26
-global isr27
-global isr28
-global isr29
-global isr30
-global isr31
 global isr_common_stub
+global irq_common_stub
+global remap_pic
 extern _sys_bzero
 extern kprintf
+extern pit_handler
 
 init_idt:
 	mov eax,the_idt
@@ -100,6 +86,25 @@ init_idt:
 	register 29
 	register 30
 	register 31
+
+	mov eax,32
+	mov ebx,pit_handler
+	call _sys_register_isr
+	register_irq 1
+	register_irq 2
+	register_irq 3
+	register_irq 4
+	register_irq 5
+	register_irq 6
+	register_irq 7
+	register_irq 8
+	register_irq 9
+	register_irq 10
+	register_irq 11
+	register_irq 12
+	register_irq 13
+	register_irq 14
+	register_irq 15
 
 	ret
 
@@ -150,13 +155,68 @@ isr_no_code 28
 isr_no_code 29
 isr_no_code 30
 isr_no_code 31
+; No irq 0 because I have a separate handler
+irq 1
+irq 2
+irq 3
+irq 4
+irq 5
+irq 6
+irq 7
+irq 8
+irq 9
+irq 10
+irq 11
+irq 12
+irq 13
+irq 14
+irq 15
+
 
 isr_common_stub:
 	mov eax,isr_str_fmt
 	call kprintf
 	add esp,8
-;	sti
+	sti
 	iret
+
+irq_common_stub:
+	mov eax,irq_str_fmt
+	call kprintf
+	pop eax
+	cmp eax,8
+	jl .master
+.slave:
+	mov al,0x20
+	out 0xa0,al
+.master:
+	mov al,0x20
+	out 0x20,al
+	sti
+	iret
+
+remap_pic:
+	mov al,0x11
+	out 0x20,al
+	mov al,0x11
+	out 0xa0,al
+	mov al,0x20
+	out 0x21,al
+	mov al,0x28
+	out 0xa1,al
+	mov al,0x04
+	out 0x21,al
+	mov al,0x02
+	out 0xa1,al
+	mov al,0x01
+	out 0x21,al
+	mov al,0x01
+	out 0xa1,al
+	mov al,0x00
+	out 0x21,al
+	mov al,0x00
+	out 0xa1,al
+	ret
 
 section .bss
 the_idt: resb 8*ENTRIES
@@ -164,3 +224,4 @@ idtr: resb 6
 
 section .data
 isr_str_fmt: db 'Interrupt: %d, Error code: %d',10,0
+irq_str_fmt: db 'IRQ: %d',10,0
