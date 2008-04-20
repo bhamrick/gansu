@@ -9,7 +9,7 @@ extern init_pit
 extern remap_pic
 extern kmain
 
-extern gdtr
+global halt
 
 _start:
 	jmp multiboot_entry
@@ -36,8 +36,8 @@ multiboot_entry:
 	sti
 	call kmain
 
-stop:	hlt
-	jmp stop
+halt:	hlt
+	jmp halt
 
 section .bss
 	align 32

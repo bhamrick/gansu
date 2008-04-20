@@ -115,5 +115,5 @@ void page_fault(int err) {
 	if(us) ckprintf("user-mode ");
 	if(reserved) ckprintf("reserved ");
 	ckprintf(")");
-	for(;;);
+	halt();
 }
