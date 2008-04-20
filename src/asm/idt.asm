@@ -123,6 +123,12 @@ _sys_register_isr:
 	mov byte [eax+5],0x8E
 	ret
 
+global register_isr
+register_isr:
+	mov eax,[esp+4]
+	mov ebx,[esp+8]
+	jmp _sys_register_isr
+
 isr_no_code 0
 isr_no_code 1
 isr_no_code 2

@@ -33,8 +33,8 @@ multiboot_entry:
 	call init_pit
 	call remap_pic
 	
-	call kmain
 	sti
+	call kmain
 
 stop:	hlt
 	jmp stop

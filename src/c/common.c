@@ -27,3 +27,9 @@ u32int kmalloc_p(u32int sz, u32int *phys) {
 u32int kmalloc_ap(u32int sz, u32int *phys) {
 	return kmalloc_int(sz,1,phys);
 }
+
+void bzero(void* tptr, u32int sz) {
+	char* ptr = tptr;
+	u32int i;
+	for(i=0; i<sz; i++) *ptr++=0;
+}

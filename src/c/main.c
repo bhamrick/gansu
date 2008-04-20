@@ -2,6 +2,13 @@
 
 void kmain() {
 	placement_address=(u32int)&end;
-	ckprintf("Hello, this is a test of ckprintf %d%x%d\n",1,2,3);
+	placement_address+=4;
+	ckprintf("end=0x%x, &end=0x%x\n",end,&end);
 	ckprintf("placement_address=0x%x\n",placement_address);
+
+	init_paging();
+	ckprintf("Hello world!\n");
+
+	u32int *ptr = (u32int*)0xA0000000;
+	u32int do_page_fault = *ptr;
 }
