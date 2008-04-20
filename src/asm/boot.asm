@@ -7,6 +7,7 @@ extern init_gdt
 extern init_idt
 extern init_pit
 extern remap_pic
+extern kmain
 
 extern gdtr
 
@@ -31,6 +32,8 @@ multiboot_entry:
 	call init_idt
 	call init_pit
 	call remap_pic
+	
+	call kmain
 	sti
 
 stop:	hlt

@@ -15,6 +15,7 @@ global kprntnum
 global kprnthex
 global inccur
 global kprintf
+global ckprintf
 global kscroll
 
 inccur:
@@ -200,6 +201,13 @@ kputstr:
 .out:
 	ret
 
+ckprintf:
+	push ebp
+	mov ebp,esp
+
+	mov eax,[ebp+8]
+	mov ebx,12
+	jmp kprintf_loop
 kprintf:
 	; The most complicated thing that will be written tonight (4/12/08)
 	; eax has a pointer to a format string
@@ -208,6 +216,7 @@ kprintf:
 	mov ebp,esp
 	
 	mov ebx,8
+kprintf_loop:
 .normal:
 	cmp byte [eax],0
 	je near .out
