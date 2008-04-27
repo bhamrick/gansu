@@ -1,9 +1,18 @@
 #include<heap.h>
 
-heap_t *make_heap(u32int start, u32int size, u8int flags) {
+heap_t *make_heap(u32int start, u32int size, u32int maxsize, u8int flags) {
+	if((size & 0xFFF) != 0) {
+		size &= 0xFFFFF000;
+		size += 0x1000;
+	}
+	if((start & 0xFFF) != 0) {
+		start &= 0xFFFFF000;
+		start += 0x1000;
+	}
 	heap_t *heap = (heap_t*)kmalloc(sizeof(heap_t));
 	heap->start = start;
 	heap->size = size;
+	heap->maxsize = maxsize;
 	heap->flags = flags;
 
 	header_t* head = (header_t*)start;

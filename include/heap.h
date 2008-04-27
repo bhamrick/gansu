@@ -20,10 +20,11 @@ typedef struct {
 typedef struct {
 	u32int start;
 	u32int size;
+	u32int maxsize;
 	u8int flags;
 } heap_t;
 
-heap_t *make_heap(u32int,u32int,u8int);
+heap_t *make_heap(u32int,u32int,u32int,u8int);
 void *alloc(u32int,u8int,heap_t*);
 void free(void*);
 

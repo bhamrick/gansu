@@ -1,2 +1,2 @@
 #!/bin/sh
-qemu -cdrom grub.iso
+qemu -cdrom grub.iso $*

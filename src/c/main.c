@@ -8,7 +8,4 @@ void kmain() {
 
 	init_paging();
 	ckprintf("Hello world!\n");
-
-	u32int *ptr = (u32int*)0xA0000000;
-	u32int do_page_fault = *ptr;
 }
