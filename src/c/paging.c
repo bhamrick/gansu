@@ -67,13 +67,14 @@ void init_paging() {
 	kernel_directory=(page_directory_t*)kmalloc_a(sizeof(page_directory_t));
 	bzero(kernel_directory, sizeof(page_directory_t));
 	current_directory = kernel_directory;
-
+	
 	u32int i = 0;
+	
 	while(i < placement_address) {
 		alloc_frame(get_page(i, 1, kernel_directory),0,0);
 		i+=0x1000;
 	}
-	
+
 	register_isr(14, (void*)page_fault);
 
 	switch_page_directory(kernel_directory);

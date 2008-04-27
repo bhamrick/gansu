@@ -7,5 +7,6 @@ void kmain() {
 	ckprintf("placement_address=0x%x\n",placement_address);
 
 	init_paging();
+	init_kbd();
 	ckprintf("Hello world!\n");
 }

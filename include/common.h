@@ -20,5 +20,7 @@ u32int kmalloc_p(u32int,u32int*);
 u32int kmalloc_ap(u32int,u32int*);
 void bzero(void*,u32int);
 void halt();
+u32int inb(u32int);
+void outb(u32int,u32int);
 
 #endif

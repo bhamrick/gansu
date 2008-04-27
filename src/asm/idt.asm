@@ -39,10 +39,21 @@ global init_idt
 global _sys_register_isr
 global isr_common_stub
 global irq_common_stub
+global irq_common_stub_noprint
 global remap_pic
 extern _sys_bzero
 extern kprintf
 extern pit_handler
+global sys_kbd_handler
+extern keyboard_handler
+
+sys_kbd_handler:
+	cli
+	call keyboard_handler
+	mov al,0x20
+	out 0x20,al
+	sti
+	iret
 
 init_idt:
 	mov eax,the_idt
@@ -90,7 +101,9 @@ init_idt:
 	mov eax,32
 	mov ebx,pit_handler
 	call _sys_register_isr
-	register_irq 1
+	mov eax,33
+	mov ebx,sys_kbd_handler
+	call _sys_register_isr
 	register_irq 2
 	register_irq 3
 	register_irq 4
