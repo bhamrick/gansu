@@ -16,38 +16,13 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef KEYBOARD_H
+#define KEYBOARD_H
+
 #include<common.h>
+#include<keys.h>
 
-u32int kmalloc_int(u32int sz, int align, u32int* phys) {
-	if(align==1 && (placement_address & 0xFFF)) {
-		placement_address = (placement_address & 0xFFFFF000) + 0x1000;
-	}
-	if(phys) {
-		*phys = placement_address;
-	}
-	u32int tmp = placement_address;
-	placement_address+=sz;
-	return tmp;
-}
+void init_kbd();
+void keyboard_handler();
 
-u32int kmalloc(u32int sz) {
-	return kmalloc_int(sz,0,0);
-}
-
-u32int kmalloc_a(u32int sz) {
-	return kmalloc_int(sz,1,0);
-}
-
-u32int kmalloc_p(u32int sz, u32int *phys) {
-	return kmalloc_int(sz,0,phys);
-}
-
-u32int kmalloc_ap(u32int sz, u32int *phys) {
-	return kmalloc_int(sz,1,phys);
-}
-
-void bzero(void* tptr, u32int sz) {
-	char* ptr = tptr;
-	u32int i;
-	for(i=0; i<sz; i++) *ptr++=0;
-}
+#endif

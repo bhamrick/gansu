@@ -16,38 +16,35 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include<common.h>
+#include<keyboard.h>
 
-u32int kmalloc_int(u32int sz, int align, u32int* phys) {
-	if(align==1 && (placement_address & 0xFFF)) {
-		placement_address = (placement_address & 0xFFFFF000) + 0x1000;
+void init_kbd() {
+}
+
+void keyboard_handler() {
+	u8int scancode;
+	scancode=inb(0x60);
+	if(scancode & 0x80) {
+		ckprintf("Released: ");
+	} else {
+		ckprintf("Pressed: ");
 	}
-	if(phys) {
-		*phys = placement_address;
+	scancode &= ~0x80;
+	switch(scancode) {
+		case KEY_LEFT_SHIFT:
+		case KEY_RIGHT_SHIFT:
+			ckprintf("Shift\n");
+			break;
+		case KEY_CAPS_LOCK:
+			ckprintf("Caps lock\n");
+			break;
+		case KEY_CTRL:
+			ckprintf("Control\n");
+			break;
+		case KEY_ALT:
+			ckprintf("Alt\n");
+			break;
+		default:
+			ckprintf("Scancode 0x%x (%d)\n",scancode,scancode);
 	}
-	u32int tmp = placement_address;
-	placement_address+=sz;
-	return tmp;
-}
-
-u32int kmalloc(u32int sz) {
-	return kmalloc_int(sz,0,0);
-}
-
-u32int kmalloc_a(u32int sz) {
-	return kmalloc_int(sz,1,0);
-}
-
-u32int kmalloc_p(u32int sz, u32int *phys) {
-	return kmalloc_int(sz,0,phys);
-}
-
-u32int kmalloc_ap(u32int sz, u32int *phys) {
-	return kmalloc_int(sz,1,phys);
-}
-
-void bzero(void* tptr, u32int sz) {
-	char* ptr = tptr;
-	u32int i;
-	for(i=0; i<sz; i++) *ptr++=0;
 }

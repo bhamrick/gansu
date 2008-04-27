@@ -14,49 +14,17 @@
 ;   You should have received a copy of the GNU General Public License
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-global init_gdt
+global inb
+global outb
 
-bits 32
-align 32
-
-init_gdt:
-	lgdt [gdtr]
-
-	mov ax,0x10
-	mov ds,ax
-	mov es,ax
-	mov gs,ax
-	mov fs,ax
-	mov ss,ax
-	
-	jmp 0x08:gdt_return
-
-gdt_return:
+inb:
+	mov edx,[esp+4]
+	xor eax,eax
+	in al,dx
 	ret
 
-section .data
-
-align 8
-
-gdt_begin:
-	dd 0
-	dd 0
-
-	dw 0xffff
-	dw 0
-	db 0
-	db 10011010b
-	db 11001111b
-	db 0
-
-	dw 0xffff
-	dw 0
-	db 0
-	db 10010010b
-	db 11001111b
-	db 0
-gdt_end:
-
-gdtr:
-	dw gdt_end-gdt_begin-1
-	dd gdt_begin
+outb:
+	mov edx,[esp+4]
+	mov eax,[esp+8]
+	out dx,ax
+	ret
