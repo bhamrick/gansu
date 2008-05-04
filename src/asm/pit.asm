@@ -60,17 +60,18 @@ pit_handler:
 	mov [seconds],eax
 	mov [minutes],ebx
 	mov [hours],ecx
-;	mov eax,[seconds]
-;	push eax
-;	mov eax,[minutes]
-;	push eax
-;	mov eax,[hours]
-;	push eax
-;	mov eax,[ticks]
-;	push eax
-;	mov eax,handler_fmt_str
-;	call kprintf
-;	add esp,16
+	jmp .noprint
+	mov eax,[seconds]
+	push eax
+	mov eax,[minutes]
+	push eax
+	mov eax,[hours]
+	push eax
+	mov eax,[ticks]
+	push eax
+	mov eax,handler_fmt_str
+	call kprintf
+	add esp,16
 .noprint:
 	mov al,0x20
 	out 0x20,al

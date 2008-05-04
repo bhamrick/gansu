@@ -17,6 +17,7 @@
  */
 
 #include<paging.h>
+#include<heap.h>
 
 static void set_frame(u32int frame_addr) {
 	u32int frame = frame_addr/0x1000;
@@ -86,16 +87,31 @@ void init_paging() {
 	bzero(kernel_directory, sizeof(page_directory_t));
 	current_directory = kernel_directory;
 	
+	kheap = create_heap(KHEAP_START, KHEAP_START+KHEAP_INITIAL_SIZE, 0xCFFFF000, 0, 0);
 	u32int i = 0;
+
+	for(i = KHEAP_START; i<KHEAP_START+KHEAP_INITIAL_SIZE; i+=0x1000) {
+		get_page(i, 1, kernel_directory);
+	}
 	
+	i = 0;
+
 	while(i < placement_address) {
 		alloc_frame(get_page(i, 1, kernel_directory),0,0);
 		i+=0x1000;
 	}
 
+	for(i = KHEAP_START; i<KHEAP_START+KHEAP_INITIAL_SIZE; i+=0x1000) {
+		alloc_frame( get_page(i, 1, kernel_directory), 0,0);
+	}
+
 	register_isr(14, (void*)page_fault);
 
 	switch_page_directory(kernel_directory);
+
+	init_heap(kheap);
+
+	switch_heap(kheap);
 }
 
 void switch_page_directory(page_directory_t* dir) {

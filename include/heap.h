@@ -16,24 +16,34 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef HEAP_H
+#define HEAP_H
+
+#define KHEAP_START 0xC0000000
+#define KHEAP_INITIAL_SIZE 0x100000
+#define KHEAP_MAX_SIZE 0x40000000
+
 #include<common.h>
-#include<heap.h>
+#include<paging.h>
 
-void kmain() {
-	placement_address=(u32int)&end;
-	placement_address+=4;
-	ckprintf("end=0x%x, &end=0x%x\n",end,&end);
-	ckprintf("placement_address=0x%x\n",placement_address);
+typedef struct {
+	u32int start_addr;
+	u32int end_addr;
+	u32int max_addr;
+	u8int super;
+	u8int ronly;
+} heap_t;
 
-	init_paging();
-	init_kbd();
-	
-	u32int a = (u32int)malloc(0x8);
-	u32int b = (u32int)malloc(0x1000);
-	u32int c = (u32int)malloc(0x8);
-	u32int e = (u32int)malloca(0x1);
-	ckprintf("a=0x%x, b=0x%x, c=0x%x, e=0x%x\n",a,b,c,e);
-	u32int *d = (u32int*)a;
-	*d = 0x600DB0B1;
-	ckprintf("d=0x%x, *d=0x%x\n",d,*d);
-}
+heap_t *kheap, *cur_heap;
+
+heap_t* create_heap(u32int,u32int,u32int,u8int,u8int);
+void* alloc_int(u32int,u8int,heap_t*);
+void free_int(void*,heap_t*);
+void* malloc(u32int);
+void* malloca(u32int);
+void switch_heap(heap_t*);
+void free(void*);
+void expand(u32int,heap_t*);
+void init_heap(heap_t*);
+
+#endif
