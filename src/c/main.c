@@ -16,24 +16,21 @@
  *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include<keyboard.h>
 #include<common.h>
 #include<heap.h>
 
 void kmain() {
 	placement_address=(u32int)&end;
 	placement_address+=4;
-	ckprintf("end=0x%x, &end=0x%x\n",end,&end);
-	ckprintf("placement_address=0x%x\n",placement_address);
 
 	init_paging();
 	init_kbd();
 	
-	u32int a = (u32int)malloc(0x8);
-	u32int b = (u32int)malloc(0x1000);
-	u32int c = (u32int)malloc(0x8);
-	u32int e = (u32int)malloca(0x1);
-	ckprintf("a=0x%x, b=0x%x, c=0x%x, e=0x%x\n",a,b,c,e);
-	u32int *d = (u32int*)a;
-	*d = 0x600DB0B1;
-	ckprintf("d=0x%x, *d=0x%x\n",d,*d);
+	char * str = (char*)malloc(2);
+	while(1) {
+		str[0]=getch();
+		str[1]=0;
+		ckprintf("%s",str);
+	}
 }

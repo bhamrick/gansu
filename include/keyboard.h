@@ -22,7 +22,17 @@
 #include<common.h>
 #include<keys.h>
 
+int key_states[8];
+unsigned char buffer[256];
+u8int buffer_loc, buffer_next;
+
+void set_key(u8int);
+void unset_key(u8int);
+int test_key(u8int);
 void init_kbd();
 void keyboard_handler();
+unsigned char getch();
+unsigned char toUpper(unsigned char);
+unsigned char toLower(unsigned char);
 
 #endif
