@@ -44,6 +44,9 @@ void* alloc_int(u32int size, u8int align, heap_t* heap) {
 	}
 	void* ans = (void*)*placement;
 	*placement+=size;
+	if(*placement > heap->end_addr) {
+		if(!expand(*placement-heap->start_addr,heap)) return (void*)0;;
+	}
 	return ans;
 }
 
@@ -67,13 +70,13 @@ void switch_heap(heap_t* heap) {
 	cur_heap = heap;
 }
 
-void expand(u32int newsize, heap_t* heap) {
-	if(newsize < heap->end_addr - heap->start_addr) return;
+int expand(u32int newsize, heap_t* heap) {
+	if(newsize < heap->end_addr - heap->start_addr) return 0;
 	if(newsize & 0xFFF) {
 		newsize &= 0xFFFFF000;
 		newsize += 0x1000;
 	}
-	if(newsize > heap->max_addr - heap->start_addr) return;
+	if(newsize > heap->max_addr - heap->start_addr) return 0;
 	u32int i = heap->end_addr - heap->start_addr;
 	while(i < newsize) {
 		alloc_frame( get_page(heap->start_addr+i, 1, kernel_directory), 
@@ -81,6 +84,7 @@ void expand(u32int newsize, heap_t* heap) {
 		i += 0x1000;
 	}
 	heap->end_addr = heap->start_addr+newsize;
+	return 1;
 }
 
 void init_heap(heap_t* heap) {

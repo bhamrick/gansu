@@ -20,8 +20,7 @@
 #define HEAP_H
 
 #define KHEAP_START 0xC0000000
-#define KHEAP_INITIAL_SIZE 0x100000
-#define KHEAP_MAX_SIZE 0x40000000
+#define KHEAP_INITIAL_SIZE 0x20000
 
 #include<common.h>
 #include<paging.h>
@@ -43,7 +42,7 @@ void* malloc(u32int);
 void* malloca(u32int);
 void switch_heap(heap_t*);
 void free(void*);
-void expand(u32int,heap_t*);
+int expand(u32int,heap_t*);
 void init_heap(heap_t*);
 
 #endif

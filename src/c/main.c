@@ -26,6 +26,11 @@ void kmain() {
 
 	init_paging();
 	init_kbd();
+
+	u32int a = (u32int)malloc(0x30000);
+	u32int* b = (u32int*)malloc(sizeof(u32int));
+	*b = 5;
+	ckprintf("b = 0x%x, *b = %d\n\n",b,*b);
 	
 	char * str = (char*)malloc(2);
 	while(1) {
