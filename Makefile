@@ -1,4 +1,4 @@
-CCFLAGS=-g -I. -Iinclude -fno-builtin -nostdinc
+CCFLAGS=-g -I. -Iinclude -fno-builtin -nostdinc -m32
 ASMFLAGS=-felf -g
 LDFLAGS=-melf_i386
 LINKER=linker.ld
