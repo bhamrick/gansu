@@ -1,4 +1,4 @@
-CCFLAGS=-g -I. -Iinclude -fno-builtin -nostdinc -m32
+CFLAGS=-g -I. -Iinclude -fno-builtin -nostdinc -m32
 ASMFLAGS=-felf -g
 LDFLAGS=-melf_i386
 LINKER=linker.ld
@@ -25,11 +25,11 @@ asm: src/asm/boot.asm src/asm/screen.asm src/asm/gdt.asm src/asm/idt.asm src/asm
 
 c: src/c/main.c src/c/common.c src/c/paging.c src/c/keyboard.c src/c/heap.c
 	mkdir -p build
-	gcc $(CCFLAGS) -o build/main.o -c src/c/main.c
-	gcc $(CCFLAGS) -o build/common.c.o -c src/c/common.c
-	gcc $(CCFLAGS) -o build/paging.o -c src/c/paging.c
-	gcc $(CCFLAGS) -o build/keyboard.o -c src/c/keyboard.c
-	gcc $(CCFLAGS) -o build/heap.o -c src/c/heap.c
+	gcc $(CFLAGS) -o build/main.o -c src/c/main.c
+	gcc $(CFLAGS) -o build/common.c.o -c src/c/common.c
+	gcc $(CFLAGS) -o build/paging.o -c src/c/paging.c
+	gcc $(CFLAGS) -o build/keyboard.o -c src/c/keyboard.c
+	gcc $(CFLAGS) -o build/heap.o -c src/c/heap.c
 
 clean: 
 	rm build/*
