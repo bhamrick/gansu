@@ -14,6 +14,7 @@ kernel: asm c
 	mkisofs -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 -boot-info-table -o grub.iso iso
 	
 asm: src/asm/boot.asm src/asm/screen.asm src/asm/gdt.asm src/asm/idt.asm src/asm/memory.asm src/asm/pit.asm src/asm/common.asm
+	mkdir -p build
 	nasm $(ASMFLAGS) -o build/boot.o src/asm/boot.asm
 	nasm $(ASMFLAGS) -o build/screen.o src/asm/screen.asm
 	nasm $(ASMFLAGS) -o build/gdt.o src/asm/gdt.asm
@@ -23,6 +24,7 @@ asm: src/asm/boot.asm src/asm/screen.asm src/asm/gdt.asm src/asm/idt.asm src/asm
 	nasm $(ASMFLAGS) -o build/common.asm.o src/asm/common.asm
 
 c: src/c/main.c src/c/common.c src/c/paging.c src/c/keyboard.c src/c/heap.c
+	mkdir -p build
 	gcc $(CCFLAGS) -o build/main.o -c src/c/main.c
 	gcc $(CCFLAGS) -o build/common.c.o -c src/c/common.c
 	gcc $(CCFLAGS) -o build/paging.o -c src/c/paging.c
