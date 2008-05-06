@@ -1,0 +1,5 @@
+default 0
+timeout 0
+title The Kernel
+	root (cd)
+	kernel /boot/kernel
