@@ -21,6 +21,9 @@
 
 #define KHEAP_START 0xC0000000
 #define KHEAP_INITIAL_SIZE 0x20000
+#define MAGIC_FREE 0xAF12EE60
+#define MAGIC_USED 0xDEADBEEF
+#define ALL_MEM 0xFFFFFFFFu
 
 #include<common.h>
 #include<paging.h>
@@ -33,16 +36,25 @@ typedef struct {
 	u8int ronly;
 } heap_t;
 
+typedef struct {
+	u32int magic;
+	u32int size;
+} header_t;
+
+typedef struct {
+	header_t* head;
+} footer_t;
+
 heap_t *kheap, *cur_heap;
 
 heap_t* create_heap(u32int,u32int,u32int,u8int,u8int);
-void* alloc_int(u32int,u8int,heap_t*);
+void* alloc_int(u32int,heap_t*);
 void free_int(void*,heap_t*);
 void* malloc(u32int);
-void* malloca(u32int);
 void switch_heap(heap_t*);
 void free(void*);
 int expand(u32int,heap_t*);
 void init_heap(heap_t*);
+header_t* next_head(header_t*);
 
 #endif
