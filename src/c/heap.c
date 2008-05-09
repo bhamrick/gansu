@@ -34,32 +34,73 @@ heap_t* create_heap(u32int start, u32int end, u32int max, u8int super, u8int ron
 	return heap;
 }
 
-void* alloc_int(u32int size, u8int align, heap_t* heap) {
-	u32int* placement = (u32int*)heap->start_addr;
-	if(align) {
-		if(*placement & 0xFFF) {
-			*placement &= 0xFFFFF000;
-			*placement += 0x1000;
-		}
-	}
-	void* ans = (void*)*placement;
-	*placement+=size;
-	if(*placement > heap->end_addr) {
-		if(!expand(*placement-heap->start_addr,heap)) return (void*)0;;
+void* alloc_int(u32int size, heap_t* heap) {
+	header_t* head = (header_t*)(heap->start_addr);
+	while(head->magic==MAGIC_USED || head->size < size) head = next_head(head);
+	if(head->magic!=MAGIC_FREE) return (void*)0;
+	
+	void* ans = (void*)((u32int)head + sizeof(header_t));
+	if(head->size == ALL_MEM) {
+		// This is the only one which might need to expand the heap - This expansion needs to be implemented sometime
+		head->magic = MAGIC_USED;
+		head->size = size;
+		footer_t* foot = (footer_t*)((u32int)head+sizeof(header_t)+head->size);
+		foot->head = head;
+		header_t* next = (header_t*)((u32int)foot+sizeof(footer_t));;
+		next->magic = MAGIC_FREE;
+		next->size = ALL_MEM;
+	} else if(head->size - size - sizeof(header_t) - sizeof(footer_t) > 0) {
+		footer_t *foot, *next_foot;
+		next_foot = (footer_t*)((u32int)head + head->size + sizeof(header_t));
+		foot = (footer_t*)((u32int)head + size + sizeof(header_t));
+		header_t *next = next_head(head);
+		
+		next->size = head->size - size - sizeof(header_t) - sizeof(footer_t);
+
+		head->magic = MAGIC_USED;
+		head->size = size;
+		foot->head = head;
+		next->magic = MAGIC_FREE;
+		next_foot->head = next;
+	} else {
+		head->magic = MAGIC_USED;
 	}
 	return ans;
 }
 
 void* malloc(u32int size) {
-	return alloc_int(size,0,cur_heap);
-}
-
-void* malloca(u32int size) {
-	return alloc_int(size,1,cur_heap);
+	return alloc_int(size,cur_heap);
 }
 
 void free_int(void* p, heap_t* heap) {
 	if(!p) return;
+	header_t* head = (header_t*)((u32int)p-sizeof(header_t));
+	if(head->magic != MAGIC_USED) return;	
+	head->magic=MAGIC_FREE;
+
+	header_t* next = (header_t*)((u32int)head + sizeof(header_t) + sizeof(footer_t) + head->size);
+	if(next->magic==MAGIC_FREE) {
+		if(next->size == ALL_MEM) {
+			head->size = ALL_MEM;
+		} else {
+			head->size = head->size + next->size + sizeof(header_t) + sizeof(footer_t);
+			footer_t* foot = (footer_t*)((u32int)head + sizeof(header_t) + head->size);
+			foot->head = head;
+		}
+	}
+
+	if(heap->start_addr != (u32int)head) {
+		header_t* prev = ((footer_t*)((u32int)head-sizeof(footer_t)))->head;
+		if(prev->magic == MAGIC_FREE) {
+			if(head->size == ALL_MEM) {
+				prev->size = ALL_MEM;
+			} else {
+				prev->size = prev->size + head->size + sizeof(header_t) + sizeof(footer_t);
+				footer_t* foot = (footer_t*)((u32int)prev + sizeof(header_t) + prev->size);
+				foot->head = prev;
+			}
+		}
+	}
 }
 
 void free(void* p) {
@@ -88,6 +129,11 @@ int expand(u32int newsize, heap_t* heap) {
 }
 
 void init_heap(heap_t* heap) {
-	u32int* placement = (u32int*)heap->start_addr;
-	*placement = (u32int)placement+sizeof(u32int);
+	header_t* head = (header_t*)(heap->start_addr);
+	head->magic = MAGIC_FREE;
+	head->size = ALL_MEM;
+}
+
+header_t* next_head(header_t* head) {
+	return (header_t*)((u32int)head + head->size + sizeof(header_t) + sizeof(footer_t));
 }
