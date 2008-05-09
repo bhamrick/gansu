@@ -74,6 +74,9 @@ void* malloc(u32int size) {
 
 void free_int(void* p, heap_t* heap) {
 	if(!p) return;
+	header_t* head = (header_t*)((u32int)p-sizeof(header_t));
+	if(head->magic != MAGIC_USED) return;	
+	head->magic=MAGIC_FREE;
 }
 
 void free(void* p) {

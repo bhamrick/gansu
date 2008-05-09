@@ -29,9 +29,11 @@ void kmain() {
 
 	u32int* b = (u32int*)malloc(sizeof(u32int));
 	*b = 5;
-	ckprintf("b = 0x%x, *b = %d\n\n",b,*b);
+	ckprintf("b = 0x%x, *b = %d\n",b,*b);
+	free(b);
 	
 	char * str = (char*)malloc(2);
+	ckprintf("str = 0x%x\n",str);
 	while(1) {
 		str[0]=getch();
 		str[1]=0;
