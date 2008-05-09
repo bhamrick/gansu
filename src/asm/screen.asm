@@ -14,7 +14,7 @@
 ;   You should have received a copy of the GNU General Public License
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-%define VIDEO 0xB8000
+%define VIDEO 0xB8000 ; only support for color displays - sorry monochromes :(
 %define ROWS 25
 %define COLS 80
 %define BYTES 4000
@@ -34,7 +34,7 @@ global kprintf
 global ckprintf
 global kscroll
 
-inccur:
+inccur: ; move cursor one place
 	inc dword [_sys_cur_col]
 	cmp dword [_sys_cur_col],COLS
 	jl .out
@@ -49,10 +49,11 @@ inccur:
 .out:
 	ret
 
-initscr:
+initscr: ; initialize the screen
 	mov dword [_sys_cur_row],0
 	mov dword [_sys_cur_col],0
 	
+	; hide the hardware cursor - I will use my own if needed
 	mov dx,0x3d4
 	mov al,0x0f
 	out dx,ax
@@ -69,12 +70,12 @@ initscr:
 	
 	ret
 
-movcur:
+movcur: ; move the "cursor" (actually just where it prints)
 	mov [_sys_cur_row],eax
 	mov [_sys_cur_col],ebx
 	ret
 
-clrscr:
+clrscr: ; clear the screen
 	mov edx,VIDEO
 	xor ecx,ecx
 .loop:
@@ -218,6 +219,7 @@ kputstr:
 	ret
 
 ckprintf:
+	; A c interface to kprintf
 	push ebp
 	mov ebp,esp
 
@@ -319,7 +321,7 @@ kprintf_loop:
 	pop ebp
 	ret
 
-kscroll:
+kscroll: ; scroll the screen up one line
 	mov edx,VIDEO
 	xor ebx,ebx
 	mov ecx,2*COLS

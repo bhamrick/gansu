@@ -14,8 +14,8 @@
 ;   You should have received a copy of the GNU General Public License
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-global inb
-global outb
+global inb ; u32int inb(u32int);
+global outb ; void outb(u32int,u32int);
 
 inb:
 	mov edx,[esp+4]

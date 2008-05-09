@@ -41,19 +41,21 @@ align 8
 gdt_begin:
 	dd 0
 	dd 0
-
+	
+	; ring 0 code (0x08)
 	dw 0xffff
 	dw 0
 	db 0
-	db 10011010b
-	db 11001111b
+	db 0x9A
+	db 0xCF
 	db 0
-
+	
+	; ring 0 data
 	dw 0xffff
 	dw 0
 	db 0
-	db 10010010b
-	db 11001111b
+	db 0x92
+	db 0xCF
 	db 0
 gdt_end:
 

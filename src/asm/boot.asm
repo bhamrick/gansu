@@ -14,6 +14,9 @@
 ;   You should have received a copy of the GNU General Public License
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+%define MULTIBOOT_MAGIC 0x1BADB002
+%define MULTIBOOT_FLAGS 0x00000003
+
 section .text
 
 global _start
@@ -32,25 +35,25 @@ _start:
 
 	align 32
 multiboot_header:
-	dd 0x1BADB002
-	dd 0x00000003
-	dd 0xE4524FFB
+	dd MULTIBOOT_MAGIC
+	dd MULTIBOOT_FLAGS
+	dd -(MULTIBOOT_MAGIC + MULTIBOOT_FLAGS) ; checksum
 
 multiboot_entry:
 	cli
 	mov ebp,multiboot_entry
-	mov esp,_sys_stack
-	call initscr
+	mov esp,_sys_stack ; set up a 64k stack
+	call initscr ; initialize the screen writing functions (printf, etc)
 	mov eax,8
 	mov ebx,0
-	call movcur
+	call movcur ; move cursor to desired mosition
 	call init_gdt
 	call init_idt
 	call init_pit
 	call remap_pic
 	
 	sti
-	call kmain
+	call kmain ; jump to c kmain() function
 
 halt:	hlt
 	jmp halt

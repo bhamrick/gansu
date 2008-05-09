@@ -15,7 +15,8 @@
 ;   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 %define ENTRIES 256
-%macro isr_no_code 1
+
+%macro isr_no_code 1 ; macro for isrs that don't push an error code
 global isr%1
 isr%1:
 	cli
@@ -23,26 +24,30 @@ isr%1:
 	push dword %1
 	jmp isr_common_stub
 %endmacro
-%macro isr_err_code 1
+
+%macro isr_err_code 1 ; macro for isrs that push an error code
 global isr%1
 isr%1:
 	cli
 	push dword %1
 	jmp isr_common_stub
 %endmacro
-%macro register 1
+
+%macro register 1 ; macro to register an isr
 	mov eax,%1
 	mov ebx,isr%1
 	call _sys_register_isr
 %endmacro
-%macro irq 1
+
+%macro irq 1 ; macro for irq
 global irq%1
 irq%1:
 	cli
 	push dword %1
 	jmp irq_common_stub
 %endmacro
-%macro register_irq 1
+
+%macro register_irq 1 ; macro to register an irq
 	mov eax,%1
 	add eax,32
 	mov ebx,irq%1
@@ -206,7 +211,6 @@ irq 12
 irq 13
 irq 14
 irq 15
-
 
 isr_common_stub:
 	mov eax,isr_str_fmt
