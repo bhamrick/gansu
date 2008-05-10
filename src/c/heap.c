@@ -44,6 +44,9 @@ void* alloc_int(u32int size, heap_t* heap) {
 		// This is the only one which might need to expand the heap - This expansion needs to be implemented sometime
 		head->magic = MAGIC_USED;
 		head->size = size;
+		if((u32int)head + sizeof(header_t)+head->size+sizeof(footer_t) > heap->end_addr) {
+			expand((u32int)head + sizeof(header_t) + head->size + sizeof(footer_t) - heap->start_addr, heap);
+		}
 		footer_t* foot = (footer_t*)((u32int)head+sizeof(header_t)+head->size);
 		foot->head = head;
 		header_t* next = (header_t*)((u32int)foot+sizeof(footer_t));;
