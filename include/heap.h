@@ -24,6 +24,7 @@
 #define MAGIC_FREE 0xAF12EE60
 #define MAGIC_USED 0xDEADBEEF
 #define ALL_MEM 0xFFFFFFFFu
+#define ALIGN(x) (((x)&0xFFFFF000u)+0x1000)
 
 #include<common.h>
 #include<paging.h>
@@ -48,9 +49,11 @@ typedef struct {
 heap_t *kheap, *cur_heap;
 
 heap_t* create_heap(u32int,u32int,u32int,u8int,u8int);
-void* alloc_int(u32int,heap_t*);
+void* alloc_int(u32int,u8int,heap_t*);
 void free_int(void*,heap_t*);
 void* malloc(u32int);
+void* malloca(u32int);
+int has_size(header_t*,u32int,u8int);
 void switch_heap(heap_t*);
 void free(void*);
 int expand(u32int,heap_t*);

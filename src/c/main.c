@@ -29,7 +29,7 @@ void kmain() {
 
 	u32int *foo = (u32int*)malloc(0x30000);
 	u32int *a = (u32int*)malloc(sizeof(u32int));
-	u32int *b = (u32int*)malloc(sizeof(u32int));
+	u32int *b = (u32int*)malloca(sizeof(u32int));
 	free(a); free(b);
 	u32int *c = (u32int*)malloc(2*sizeof(u32int));
 	ckprintf("foo = 0x%x, a = 0x%x, b = 0x%x, c = 0x%x\n\n",foo,a,b,c);

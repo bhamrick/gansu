@@ -34,21 +34,50 @@ heap_t* create_heap(u32int start, u32int end, u32int max, u8int super, u8int ron
 	return heap;
 }
 
-void* alloc_int(u32int size, heap_t* heap) {
+int has_size(header_t* head, u32int size, u8int align) {
+	if(align) {
+		return (s32int)head + sizeof(header_t) + head->size - ALIGN((s32int)head + sizeof(header_t)) >= size;
+	} else {
+		return head->size >= size;
+	}
+}
+
+void* alloc_int(u32int size, u8int align, heap_t* heap) {
 	header_t* head = (header_t*)(heap->start_addr);
-	while(head->magic==MAGIC_USED || head->size < size) head = next_head(head);
+	while(head->magic==MAGIC_USED || !has_size(head,size,align)) head = next_head(head);
 	if(head->magic!=MAGIC_FREE) return (void*)0;
+	ckprintf("head = 0x%x\n",head);
+
+	if(align) {
+		u32int diff = ALIGN((u32int)head + sizeof(header_t))-sizeof(header_t)-(u32int)head;
+		ckprintf("diff = 0x%x\n",diff);
+		if((u32int)head+diff+sizeof(header_t) > heap->end_addr) {
+			expand((u32int)head + diff + sizeof(header_t) - heap->start_addr, heap);
+		}
+		footer_t f = *(footer_t*)((u32int)head-sizeof(footer_t));
+		header_t h = *head;
+		head = (header_t*)((u32int)head + diff);
+		footer_t* foot = (footer_t*)((u32int)head-sizeof(footer_t));
+		*head = h;
+		*foot = f;
+		foot->head->size+=diff;
+		if(head->size != ALL_MEM) head->size-=diff;
+	}
+	ckprintf("head = 0x%x\n",head);
 	
 	void* ans = (void*)((u32int)head + sizeof(header_t));
 	if(head->size == ALL_MEM) {
-		// This is the only one which might need to expand the heap - This expansion needs to be implemented sometime
 		head->magic = MAGIC_USED;
 		head->size = size;
+
+		//Expand the heap if necessary
 		if((u32int)head + sizeof(header_t)+head->size+sizeof(footer_t) > heap->end_addr) {
 			expand((u32int)head + sizeof(header_t) + head->size + sizeof(footer_t) - heap->start_addr, heap);
 		}
+
 		footer_t* foot = (footer_t*)((u32int)head+sizeof(header_t)+head->size);
 		foot->head = head;
+
 		header_t* next = (header_t*)((u32int)foot+sizeof(footer_t));;
 		next->magic = MAGIC_FREE;
 		next->size = ALL_MEM;
@@ -72,7 +101,11 @@ void* alloc_int(u32int size, heap_t* heap) {
 }
 
 void* malloc(u32int size) {
-	return alloc_int(size,cur_heap);
+	return alloc_int(size,0,cur_heap);
+}
+
+void* malloca(u32int size) {
+	return alloc_int(size,1,cur_heap);
 }
 
 void free_int(void* p, heap_t* heap) {
