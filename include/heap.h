@@ -49,14 +49,14 @@ typedef struct {
 heap_t *kheap, *cur_heap;
 
 heap_t* create_heap(u32int,u32int,u32int,u8int,u8int);
-void* alloc_int(u32int,u8int,heap_t*);
+void* alloc_int(size_t,u8int,heap_t*);
 void free_int(void*,heap_t*);
-void* malloc(u32int);
-void* malloca(u32int);
-int has_size(header_t*,u32int,u8int);
+void* malloc(size_t);
+void* malloca(size_t);
+int has_size(header_t*,size_t,u8int);
 void switch_heap(heap_t*);
 void free(void*);
-int expand(u32int,heap_t*);
+int expand(size_t,heap_t*);
 void init_heap(heap_t*);
 header_t* next_head(header_t*);
 

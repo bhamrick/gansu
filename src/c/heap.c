@@ -34,7 +34,7 @@ heap_t* create_heap(u32int start, u32int end, u32int max, u8int super, u8int ron
 	return heap;
 }
 
-int has_size(header_t* head, u32int size, u8int align) {
+int has_size(header_t* head, size_t size, u8int align) {
 	if(align) {
 		return (s32int)head + sizeof(header_t) + head->size - ALIGN((s32int)head + sizeof(header_t)) >= size;
 	} else {
@@ -42,15 +42,13 @@ int has_size(header_t* head, u32int size, u8int align) {
 	}
 }
 
-void* alloc_int(u32int size, u8int align, heap_t* heap) {
+void* alloc_int(size_t size, u8int align, heap_t* heap) {
 	header_t* head = (header_t*)(heap->start_addr);
 	while(head->magic==MAGIC_USED || !has_size(head,size,align)) head = next_head(head);
 	if(head->magic!=MAGIC_FREE) return (void*)0;
-	ckprintf("head = 0x%x\n",head);
 
 	if(align) {
 		u32int diff = ALIGN((u32int)head + sizeof(header_t))-sizeof(header_t)-(u32int)head;
-		ckprintf("diff = 0x%x\n",diff);
 		if((u32int)head+diff+sizeof(header_t) > heap->end_addr) {
 			expand((u32int)head + diff + sizeof(header_t) - heap->start_addr, heap);
 		}
@@ -63,7 +61,6 @@ void* alloc_int(u32int size, u8int align, heap_t* heap) {
 		foot->head->size+=diff;
 		if(head->size != ALL_MEM) head->size-=diff;
 	}
-	ckprintf("head = 0x%x\n",head);
 	
 	void* ans = (void*)((u32int)head + sizeof(header_t));
 	if(head->size == ALL_MEM) {
@@ -147,7 +144,7 @@ void switch_heap(heap_t* heap) {
 	cur_heap = heap;
 }
 
-int expand(u32int newsize, heap_t* heap) {
+int expand(size_t newsize, heap_t* heap) {
 	if(newsize < heap->end_addr - heap->start_addr) return 0;
 	if(newsize & 0xFFF) {
 		newsize &= 0xFFFFF000;

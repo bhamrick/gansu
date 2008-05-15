@@ -26,17 +26,19 @@ typedef	signed		short	s16int;
 typedef	unsigned	char	u8int;
 typedef	signed		char	s8int;
 
+typedef	unsigned	int	size_t;
+
 extern u32int end;
 
 void register_isr(int,void*);
 u32int placement_address;
 void ckprintf(char*,...);
-u32int kmalloc_int(u32int,int,u32int*);
-u32int kmalloc(u32int);
-u32int kmalloc_a(u32int);
-u32int kmalloc_p(u32int,u32int*);
-u32int kmalloc_ap(u32int,u32int*);
-void bzero(void*,u32int);
+u32int kmalloc_int(size_t,int,u32int*);
+u32int kmalloc(size_t);
+u32int kmalloc_a(size_t);
+u32int kmalloc_p(size_t,u32int*);
+u32int kmalloc_ap(size_t,u32int*);
+void bzero(void*,size_t);
 void halt();
 u32int inb(u32int);
 void outb(u32int,u32int);

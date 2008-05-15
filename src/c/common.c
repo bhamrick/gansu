@@ -18,7 +18,7 @@
 
 #include<common.h>
 
-u32int kmalloc_int(u32int sz, int align, u32int* phys) {
+u32int kmalloc_int(size_t sz, int align, u32int* phys) {
 	if(align==1 && (placement_address & 0xFFF)) {
 		placement_address = (placement_address & 0xFFFFF000) + 0x1000;
 	}
@@ -30,23 +30,23 @@ u32int kmalloc_int(u32int sz, int align, u32int* phys) {
 	return tmp;
 }
 
-u32int kmalloc(u32int sz) {
+u32int kmalloc(size_t sz) {
 	return kmalloc_int(sz,0,0);
 }
 
-u32int kmalloc_a(u32int sz) {
+u32int kmalloc_a(size_t sz) {
 	return kmalloc_int(sz,1,0);
 }
 
-u32int kmalloc_p(u32int sz, u32int *phys) {
+u32int kmalloc_p(size_t sz, u32int *phys) {
 	return kmalloc_int(sz,0,phys);
 }
 
-u32int kmalloc_ap(u32int sz, u32int *phys) {
+u32int kmalloc_ap(size_t sz, u32int *phys) {
 	return kmalloc_int(sz,1,phys);
 }
 
-void bzero(void* tptr, u32int sz) {
+void bzero(void* tptr, size_t sz) {
 	char* ptr = tptr;
 	u32int i;
 	for(i=0; i<sz; i++) *ptr++=0;

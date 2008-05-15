@@ -18,6 +18,7 @@
 
 #include<keyboard.h>
 #include<common.h>
+#include<device.h>
 #include<heap.h>
 
 void kmain() {
