@@ -1,7 +1,7 @@
-;   This is part of Hamtaro, a simple operating system.
+;   This is part of Gansu, a simple operating system.
 ;   Copyright (C) 2008  Brian Hamrick
 ;
-;   Hamtaro is free software: you can redistribute it and/or modify
+;   Gansu is free software: you can redistribute it and/or modify
 ;   it under the terms of the GNU General Public License as published by
 ;   the Free Software Foundation, either version 3 of the License, or
 ;   (at your option) any later version.
