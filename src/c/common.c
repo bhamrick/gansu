@@ -17,9 +17,19 @@
  */
 
 #include<common.h>
+#include<paging.h>
+#include<heap.h>
 
-u32int kmalloc_int(size_t sz, int align, u32int* phys) {
-	if(align==1 && (placement_address & 0xFFF)) {
+u32int kmalloc_int(size_t sz, u8int align, u32int* phys) {
+/*	if(kheap != 0) {
+		void *addr = alloc_int(sz,align,kheap);
+		if(phys) {
+			page_t* page = get_page((u32int)addr, 0, kernel_directory);
+			*phys = (page->frame<<12) + ((u32int)addr&0xFFF);
+		}
+		return (u32int)addr;
+	}
+*/	if(align==1 && (placement_address & 0xFFF)) {
 		placement_address = (placement_address & 0xFFFFF000) + 0x1000;
 	}
 	if(phys) {

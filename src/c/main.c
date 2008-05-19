@@ -33,10 +33,14 @@ void kmain() {
 	u32int *b = (u32int*)malloca(sizeof(u32int));
 	free(a); free(b);
 	u32int *c = (u32int*)malloc(2*sizeof(u32int));
-	ckprintf("foo = 0x%x, a = 0x%x, b = 0x%x, c = 0x%x\n\n",foo,a,b,c);
+	ckprintf("foo = 0x%x, a = 0x%x, b = 0x%x, c = 0x%x\n",foo,a,b,c);
+
+	int cr3;
+	asm volatile("movl %%cr3, %0" : "=r"(cr3));
+	ckprintf("cr3=0x%x\n\n",cr3);
 	
 	char * str = (char*)malloc(2);
-	ckprintf("str = 0x%x\n",str);
+	ckprintf("str = 0x%x\n\n",str);
 	while(1) {
 		str[0]=getch();
 		str[1]=0;

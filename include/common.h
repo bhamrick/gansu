@@ -33,7 +33,7 @@ extern u32int end;
 void register_isr(int,void*);
 u32int placement_address;
 void ckprintf(char*,...);
-u32int kmalloc_int(size_t,int,u32int*);
+u32int kmalloc_int(size_t,u8int,u32int*);
 u32int kmalloc(size_t);
 u32int kmalloc_a(size_t);
 u32int kmalloc_p(size_t,u32int*);

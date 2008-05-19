@@ -1,4 +1,4 @@
-CFLAGS=-g -I. -Iinclude -fno-builtin -nostdinc -m32
+CFLAGS=-g -Iinclude -fno-builtin -nostdinc -m32
 ASMFLAGS=-felf -g
 LDFLAGS=-melf_i386
 LINKER=linker.ld
@@ -37,4 +37,4 @@ clean:
 	rm grub.iso
 
 install:
-	cp build/kernel /boot/kernel-hamtaro
+	cp build/kernel /boot/kernel-gansu
