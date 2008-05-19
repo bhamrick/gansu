@@ -24,6 +24,7 @@
 void kmain() {
 	placement_address=(u32int)&end;
 	placement_address+=4;
+	kheap = 0;
 
 	init_paging();
 	init_kbd();
